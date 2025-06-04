@@ -1,6 +1,6 @@
 <?php
 
-namespace AymanElshehawy\Fawry\Tests\Unit;
+namespace AymanZayedElshehawy\Fawry\Tests\Unit;
 
 use AymanZayedElshehawy\Fawry\Exceptions\InvalidConfigurationException;
 use AymanZayedElshehawy\Fawry\Exceptions\PaymentException;

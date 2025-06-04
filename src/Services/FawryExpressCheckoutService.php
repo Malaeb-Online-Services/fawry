@@ -1,6 +1,6 @@
 <?php
 
-namespace AymanElshehawy\Fawry\Services;
+namespace AymanZayedElshehawy\Fawry\Services;
 
 use AymanZayedElshehawy\Fawry\DTOs\ReturnPaymentHandleWebhookDTO;
 use AymanZayedElshehawy\Fawry\ENUM\PaymentTransactionStatusEnum;
