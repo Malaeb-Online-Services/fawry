@@ -28,5 +28,11 @@ class FawryServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/Config/fawry.php' => config_path('fawry.php'),
         ], 'fawry-config');
+
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'fawry');
+        
+        $this->publishes([
+            __DIR__.'/../resources/lang' => resource_path('lang/vendor/fawry'),
+        ], 'fawry-translations');
     }
 } 

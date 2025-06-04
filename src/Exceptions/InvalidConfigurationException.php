@@ -1,0 +1,23 @@
+<?php
+
+namespace AymanElshehawy\LaravelFawry\Exceptions;
+
+use Illuminate\Support\Facades\Lang;
+
+class InvalidConfigurationException extends FawryException
+{
+    public static function missingMerchantCode(): self
+    {
+        return new self(\trans('fawry::exceptions.configuration.missing_merchant_code'));
+    }
+
+    public static function missingSecureKey(): self
+    {
+        return new self(\trans('fawry::exceptions.configuration.missing_secure_key'));
+    }
+
+    public static function missingBaseUrl(): self
+    {
+        return new self(\trans('fawry::exceptions.configuration.missing_base_url'));
+    }
+} 

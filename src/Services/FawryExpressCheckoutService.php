@@ -4,9 +4,13 @@ namespace AymanElshehawy\LaravelFawry\Services;
 
 use AymanElshehawy\LaravelFawry\DTOs\ReturnPaymentHandleWebhookDTO;
 use AymanElshehawy\LaravelFawry\ENUM\PaymentTransactionStatusEnum;
+use AymanElshehawy\LaravelFawry\Exceptions\InvalidConfigurationException;
+use AymanElshehawy\LaravelFawry\Exceptions\PaymentException;
+use AymanElshehawy\LaravelFawry\Validation\PaymentValidation;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class FawryExpressCheckoutService
 {
@@ -19,59 +23,103 @@ class FawryExpressCheckoutService
         $this->merchantCode = config('fawry.merchant_code');
         $this->secureKey = config('fawry.secure_key');
         $this->baseUrl = config('fawry.fawrypay_url');
+
+        $this->validateConfiguration();
+    }
+
+    protected function validateConfiguration(): void
+    {
+        if (empty($this->merchantCode)) {
+            throw InvalidConfigurationException::missingMerchantCode();
+        }
+
+        if (empty($this->secureKey)) {
+            throw InvalidConfigurationException::missingSecureKey();
+        }
+
+        if (empty($this->baseUrl)) {
+            throw InvalidConfigurationException::missingBaseUrl();
+        }
     }
 
     /**
      * Generate a new hosted payment link
+     *
+     * @param array $params
+     * @return string|null
+     * @throws PaymentException
      */
     public function createPaymentLink(array $params): ?string
     {
-        $merchantRefNumber = $params['payment_id'];
-        $customerProfileId = $params['user']['id'];
-        // Prepare charge items
-        $chargeItems = [];
-        $totalAmount = 0;
-        
-        foreach ($params['items'] as $item) {
-            $chargeItems[] = [
-                'itemId' => $item['id'],
-                'description' => $item['description'] ?? 'Payment for Order',
-                'price' => number_format($item['price'], 2, '.', ''),
-                'quantity' => $item['quantity'] ?? 1
+        try {
+            PaymentValidation::validatePaymentParams($params);
+
+            $merchantRefNumber = $params['payment_id'];
+            $customerProfileId = $params['user']['id'];
+            
+            // Prepare charge items
+            $chargeItems = [];
+            $totalAmount = 0;
+            
+            foreach ($params['items'] as $item) {
+                $chargeItems[] = [
+                    'itemId' => $item['id'],
+                    'description' => $item['description'] ?? 'Payment for Order',
+                    'price' => number_format($item['price'], 2, '.', ''),
+                    'quantity' => $item['quantity'] ?? 1
+                ];
+                $totalAmount += ($item['price'] * ($item['quantity'] ?? 1));
+            }
+
+            $signature = $this->generateSignature($merchantRefNumber, $customerProfileId, $totalAmount, $params['redirect_url'], $chargeItems);
+            
+            $payload = [
+                'merchantCode' => $this->merchantCode,
+                'merchantRefNum' => $merchantRefNumber,
+                'customerMobile' => $params['user']['phone_number'],
+                'customerEmail' => $params['user']['email'],
+                'customerName' => $params['user']['name'],
+                'customerProfileId' => $customerProfileId,
+                'language' => (App::getLocale() == 'en') ? 'en-gb' : 'ar-eg',
+                'paymentExpiry' => now()->addMinutes(30)->timestamp * 1000,
+                'chargeItems' => $chargeItems,
+                'returnUrl' => $params['redirect_url'],
+                'orderWebHookUrl' => $params['webhook_url'] ?? null,
+                'authCaptureModePayment' => false,
+                'signature' => $signature,
             ];
-            $totalAmount += ($item['price'] * ($item['quantity'] ?? 1));
+
+            $response = Http::post("{$this->baseUrl}/fawrypay-api/api/payments/init", $payload);
+
+            if ($response->successful()) {
+                return $response->body();
+            }
+
+            Log::error('Fawry payment link creation failed', [
+                'response' => $response->json(),
+                'params' => $params
+            ]);
+
+            throw PaymentException::apiError($response->json()['statusDescription'] ?? 'Unknown error', [
+                'response' => $response->json()
+            ]);
+
+        } catch (ConnectionException $e) {
+            Log::error('Fawry API connection error', [
+                'message' => $e->getMessage(),
+                'params' => $params
+            ]);
+
+            throw PaymentException::apiError('Failed to connect to Fawry API', [
+                'original_error' => $e->getMessage()
+            ]);
         }
-
-        $signature = $this->generateSignature($merchantRefNumber, $customerProfileId, $totalAmount, $returnUrl, $chargeItems);
-        
-        $payload = [
-            'merchantCode' => $this->merchantCode,
-            'merchantRefNum' => $merchantRefNumber,
-            'customerMobile' => $params['user']['phone_number'],
-            'customerEmail' => $params['user']['email'],
-            'customerName' => $params['user']['name'],
-            'customerProfileId' => $customerProfileId,
-            'language' => (App::getLocale() == 'en') ? 'en-gb' : 'ar-eg',
-            'paymentExpiry' => now()->addMinutes(30)->timestamp * 1000,
-            'chargeItems' => $chargeItems,
-            'returnUrl' => $params['redirect_url'],
-            'orderWebHookUrl' => $params['webhook_url'],
-            'authCaptureModePayment' => false,
-            'signature' => $signature,
-        ];
-
-        $response = Http::post("{$this->baseUrl}/fawrypay-api/api/payments/init", $payload);
-
-        if ($response->successful()) {
-            return $response->body();
-        }
-        return null;
     }
 
     /**
      * Generate Fawry signature for request
      */
-    protected function generateSignature(string $merchantRefNumber, string $customerProfileId, float $amount, $returnUrl, array $items): string
+    protected function generateSignature(string $merchantRefNumber, string $customerProfileId, float $amount, string $returnUrl, array $items): string
     {
         $itemsString = '';
         foreach ($items as $item) {
@@ -94,29 +142,42 @@ class FawryExpressCheckoutService
      */
     public function getPaymentStatus(array $transactionData): ReturnPaymentHandleWebhookDTO
     {
-        if (isset($transactionData['statusCode']) && (int)$transactionData['statusCode'] == 200) {
-            $merchantRefNumber = $transactionData['merchantRefNumber'] ?? '';
-            $merchantCode = $this->merchantCode;
-            $merchantSecureKey = $this->secureKey;
-            $signature = hash('sha256', $merchantCode . $merchantRefNumber . $merchantSecureKey);
-            $url = $this->baseUrl . '/ECommerceWeb/Fawry/payments/status/v2' .
-                '?merchantCode=' . $merchantCode .
-                '&merchantRefNumber=' . $merchantRefNumber .
-                '&signature=' . $signature;
-            $response = Http::get($url);
-            $response = $response->object();
-            return new ReturnPaymentHandleWebhookDTO(
-                status: ($this->isPaidSuccessfully($response->orderStatus)) ? PaymentTransactionStatusEnum::SUCCESS : PaymentTransactionStatusEnum::FAILED,
-                status_text: $response->orderStatus,
-                response: $transactionData
-            );
-        } else {
+        try {
+            if (isset($transactionData['statusCode']) && (int)$transactionData['statusCode'] == 200) {
+                $merchantRefNumber = $transactionData['merchantRefNumber'] ?? '';
+                $merchantCode = $this->merchantCode;
+                $merchantSecureKey = $this->secureKey;
+                $signature = hash('sha256', $merchantCode . $merchantRefNumber . $merchantSecureKey);
+                $url = $this->baseUrl . '/ECommerceWeb/Fawry/payments/status/v2' .
+                    '?merchantCode=' . $merchantCode .
+                    '&merchantRefNumber=' . $merchantRefNumber .
+                    '&signature=' . $signature;
+                $response = Http::get($url);
+                $response = $response->object();
+                return new ReturnPaymentHandleWebhookDTO(
+                    status: ($this->isPaidSuccessfully($response->orderStatus)) ? PaymentTransactionStatusEnum::SUCCESS : PaymentTransactionStatusEnum::FAILED,
+                    status_text: $response->orderStatus,
+                    response: $transactionData
+                );
+            }
+
+            Log::warning('Fawry payment status check failed', [
+                'transaction_data' => $transactionData
+            ]);
+
             return new ReturnPaymentHandleWebhookDTO(
                 status: PaymentTransactionStatusEnum::FAILED,
                 status_text: PaymentTransactionStatusEnum::FAILED->name,
                 message: $transactionData['statusDescription'] ?? 'Payment failed',
                 response: $transactionData
             );
+        } catch (ConnectionException $e) {
+            Log::error('Fawry API connection error during status check', [
+                'message' => $e->getMessage(),
+                'transaction_data' => $transactionData
+            ]);
+
+            throw $e;
         }
     }
 
