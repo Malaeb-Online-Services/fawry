@@ -29,10 +29,10 @@ class FawryServiceProvider extends ServiceProvider
             __DIR__.'/Config/fawry.php' => config_path('fawry.php'),
         ], 'fawry-config');
 
-        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'fawry');
+        $this->loadTranslationsFrom(__DIR__.'/../app/Lang', 'fawry');
         
         $this->publishes([
-            __DIR__.'/../resources/lang' => resource_path('lang/vendor/fawry'),
+            __DIR__.'/../app/Lang' => lang_path('vendor/fawry'),
         ], 'fawry-translations');
     }
 } 
