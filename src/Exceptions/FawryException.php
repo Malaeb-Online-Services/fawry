@@ -1,6 +1,6 @@
 <?php
 
-namespace AymanZayedElshehawy\Fawry\Exceptions;
+namespace AymanElshehawy\Fawry\Exceptions;
 
 use Exception;
 

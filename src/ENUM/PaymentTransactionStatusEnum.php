@@ -1,6 +1,6 @@
 <?php
 
-namespace AymanZayedElshehawy\Fawry\ENUM;
+namespace AymanElshehawy\Fawry\ENUM;
 
 enum PaymentTransactionStatusEnum: string
 {

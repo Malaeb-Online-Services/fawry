@@ -7,19 +7,19 @@ A Laravel package for integrating Fawry payment gateway into your Laravel applic
 You can install the package via composer:
 
 ```bash
-composer require aymanzayedelshehawy/fawry
+composer require aymanelshehawy/fawry
 ```
 
 After installing the package, publish the configuration file:
 
 ```bash
-php artisan vendor:publish --provider="AymanZayedElshehawy\Fawry\FawryServiceProvider" --tag="fawry-config"
+php artisan vendor:publish --provider="AymanElshehawy\Fawry\FawryServiceProvider" --tag="fawry-config"
 ```
 
 To publish the translation files:
 
 ```bash
-php artisan vendor:publish --provider="AymanZayedElshehawy\Fawry\FawryServiceProvider" --tag="fawry-translations"
+php artisan vendor:publish --provider="AymanElshehawy\Fawry\FawryServiceProvider" --tag="fawry-translations"
 ```
 
 ## Configuration
@@ -37,7 +37,7 @@ FAWRY_PAYMENT_URL=https://atfawry.fawrystaging.com
 ### Creating a Payment Link
 
 ```php
-use AymanZayedElshehawy\Fawry\Facades\Fawry;
+use AymanElshehawy\Fawry\Facades\Fawry;
 
 $params = [
     'payment_id' => '123',
@@ -67,11 +67,11 @@ $params = [
 
 try {
     $paymentLink = Fawry::createPaymentLink($params);
-} catch (\AymanZayedElshehawy\Fawry\Exceptions\PaymentException $e) {
+} catch (\AymanElshehawy\Fawry\Exceptions\PaymentException $e) {
     // Handle payment-specific errors
     $errorContext = $e->getContext();
     // Log or handle the error
-} catch (\AymanZayedElshehawy\Fawry\Exceptions\InvalidConfigurationException $e) {
+} catch (\AymanElshehawy\Fawry\Exceptions\InvalidConfigurationException $e) {
     // Handle configuration errors
     // Log or handle the error
 }
@@ -80,7 +80,7 @@ try {
 ### Handling Payment Status
 
 ```php
-use AymanZayedElshehawy\Fawry\Facades\Fawry;
+use AymanElshehawy\Fawry\Facades\Fawry;
 
 $transactionData = [
     'statusCode' => '200',
@@ -111,7 +111,7 @@ Thrown when there are issues with payment processing:
 ```php
 try {
     $paymentLink = Fawry::createPaymentLink($params);
-} catch (\AymanZayedElshehawy\Fawry\Exceptions\PaymentException $e) {
+} catch (\AymanElshehawy\Fawry\Exceptions\PaymentException $e) {
     $errorContext = $e->getContext();
     // Handle the error
 }
@@ -127,7 +127,7 @@ Thrown when there are issues with the package configuration:
 ```php
 try {
     $paymentLink = Fawry::createPaymentLink($params);
-} catch (\AymanZayedElshehawy\Fawry\Exceptions\InvalidConfigurationException $e) {
+} catch (\AymanElshehawy\Fawry\Exceptions\InvalidConfigurationException $e) {
     // Handle configuration errors
 }
 ```
@@ -147,12 +147,12 @@ The package includes translations for error messages in both English and Arabic.
 
 1. Publish the translation files:
 ```bash
-php artisan vendor:publish --provider="AymanZayedElshehawy\Fawry\FawryServiceProvider" --tag="fawry-translations"
+php artisan vendor:publish --provider="AymanElshehawy\Fawry\FawryServiceProvider" --tag="fawry-translations"
 ```
 
 2. The translations will be available in:
-   - English: `resources/lang/vendor/fawry/en/fawry.php`
-   - Arabic: `resources/lang/vendor/fawry/ar/fawry.php`
+   - English: `app/Lang/en/fawry.php`
+   - Arabic: `app/Lang/ar/fawry.php`
 
 3. You can customize the translations by editing these files.
 

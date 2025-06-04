@@ -1,8 +1,8 @@
 <?php
 
-namespace AymanZayedElshehawy\Fawry\Validation;
+namespace AymanElshehawy\Fawry\Validation;
 
-use AymanZayedElshehawy\Fawry\Exceptions\PaymentException;
+use AymanElshehawy\Fawry\Exceptions\PaymentException;
 
 class PaymentValidation
 {

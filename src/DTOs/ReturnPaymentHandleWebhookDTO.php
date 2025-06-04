@@ -1,6 +1,6 @@
 <?php
 
-namespace AymanZayedElshehawy\Fawry\DTOs;
+namespace AymanElshehawy\Fawry\DTOs;
 
 use AymanZayedElshehawy\Fawry\ENUM\PaymentTransactionStatusEnum;
 
