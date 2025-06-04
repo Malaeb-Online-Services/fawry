@@ -100,7 +100,7 @@ class FawryExpressCheckoutService
                 'params' => $params
             ]);
 
-            throw PaymentException::apiError($response->json()['statusDescription'] ?? 'Unknown error', [
+            throw PaymentException::apiError($response->json()['description'] ?? 'Unknown error', [
                 'response' => $response->json()
             ]);
 
@@ -131,7 +131,6 @@ class FawryExpressCheckoutService
             $customerProfileId .
             $returnUrl .
             $itemsString .
-            number_format($amount, 2, '.', '') .
             $this->secureKey;
             
         return hash('sha256', $string);
