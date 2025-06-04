@@ -1,8 +1,8 @@
 <?php
 
-namespace AymanElshehawy\LaravelFawry\DTOs;
+namespace AymanZayedElshehawy\Fawry\DTOs;
 
-use AymanElshehawy\LaravelFawry\ENUM\PaymentTransactionStatusEnum;
+use AymanZayedElshehawy\Fawry\ENUM\PaymentTransactionStatusEnum;
 
 class ReturnPaymentHandleWebhookDTO
 {

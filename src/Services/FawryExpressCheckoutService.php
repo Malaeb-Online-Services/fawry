@@ -1,12 +1,12 @@
 <?php
 
-namespace AymanElshehawy\LaravelFawry\Services;
+namespace AymanZayedElshehawy\Fawry\Services;
 
-use AymanElshehawy\LaravelFawry\DTOs\ReturnPaymentHandleWebhookDTO;
-use AymanElshehawy\LaravelFawry\ENUM\PaymentTransactionStatusEnum;
-use AymanElshehawy\LaravelFawry\Exceptions\InvalidConfigurationException;
-use AymanElshehawy\LaravelFawry\Exceptions\PaymentException;
-use AymanElshehawy\LaravelFawry\Validation\PaymentValidation;
+use AymanZayedElshehawy\Fawry\DTOs\ReturnPaymentHandleWebhookDTO;
+use AymanZayedElshehawy\Fawry\ENUM\PaymentTransactionStatusEnum;
+use AymanZayedElshehawy\Fawry\Exceptions\InvalidConfigurationException;
+use AymanZayedElshehawy\Fawry\Exceptions\PaymentException;
+use AymanZayedElshehawy\Fawry\Validation\PaymentValidation;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Http;

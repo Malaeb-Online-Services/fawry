@@ -1,6 +1,6 @@
 <?php
 
-namespace AymanElshehawy\LaravelFawry\Exceptions;
+namespace AymanZayedElshehawy\Fawry\Exceptions;
 
 use Illuminate\Support\Facades\Lang;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace AymanElshehawy\LaravelFawry\Validation;
+namespace AymanElshehawy\Fawry\Validation;
 
 use AymanElshehawy\LaravelFawry\Exceptions\PaymentException;
 

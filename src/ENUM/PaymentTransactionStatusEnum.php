@@ -1,14 +1,14 @@
 <?php
 
-namespace AymanElshehawy\LaravelFawry\ENUM;
+namespace AymanZayedElshehawy\Fawry\ENUM;
 
-enum PaymentTransactionStatusEnum: int
+enum PaymentTransactionStatusEnum: string
 {
-    case PENDING = 0;
-    case SUCCESS = 1;
-    case FAILED = 2;
-    case REFUNDED = 3;
-    case CANCELED = 4;
+    case SUCCESS = 'SUCCESS';
+    case FAILED = 'FAILED';
+    case PENDING = 'PENDING';
+    case REFUNDED = 'REFUNDED';
+    case CANCELED = 'CANCELED';
 
     public static function values(): array
     {

@@ -1,10 +1,10 @@
 <?php
 
-namespace AymanElshehawy\LaravelFawry\Tests\Unit;
+namespace AymanZayedElshehawy\Fawry\Tests\Unit;
 
-use AymanElshehawy\LaravelFawry\Exceptions\InvalidConfigurationException;
-use AymanElshehawy\LaravelFawry\Exceptions\PaymentException;
-use AymanElshehawy\LaravelFawry\Services\FawryExpressCheckoutService;
+use AymanZayedElshehawy\Fawry\Exceptions\InvalidConfigurationException;
+use AymanZayedElshehawy\Fawry\Exceptions\PaymentException;
+use AymanZayedElshehawy\Fawry\Services\FawryExpressCheckoutService;
 use Illuminate\Support\Facades\Config;
 use Orchestra\Testbench\TestCase;
 
