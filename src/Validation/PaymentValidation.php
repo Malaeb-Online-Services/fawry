@@ -3,6 +3,7 @@
 namespace AymanZayedElshehawy\Fawry\Validation;
 
 use AymanZayedElshehawy\Fawry\Exceptions\PaymentException;
+use Illuminate\Support\Facades\Lang;
 
 class PaymentValidation
 {
@@ -22,7 +23,7 @@ class PaymentValidation
             if (!isset($params[$field])) {
                 throw PaymentException::invalidCustomerData()->setContext([
                     'field' => $field,
-                    'message' => \trans('fawry::exceptions.payment.required_field_missing', ['field' => $field])
+                    'message' => Lang::get('fawry::exceptions.payment.required_field_missing', ['field' => $field])
                 ]);
             }
         }
@@ -36,7 +37,7 @@ class PaymentValidation
             if (!isset($userData[$field]) || empty($userData[$field])) {
                 throw PaymentException::invalidCustomerData()->setContext([
                     'field' => $field,
-                    'message' => \trans('fawry::exceptions.payment.required_user_field_missing', ['field' => $field])
+                    'message' => Lang::get('fawry::exceptions.payment.required_user_field_missing', ['field' => $field])
                 ]);
             }
         }
@@ -46,7 +47,7 @@ class PaymentValidation
     {
         if (empty($items)) {
             throw PaymentException::invalidItems()->setContext([
-                'message' => \trans('fawry::exceptions.payment.items.required')
+                'message' => Lang::get('fawry::exceptions.payment.items.required')
             ]);
         }
 
@@ -54,14 +55,14 @@ class PaymentValidation
             if (!isset($item['id'], $item['price']) || empty($item['id']) || !is_numeric($item['price'])) {
                 throw PaymentException::invalidItems()->setContext([
                     'index' => $index,
-                    'message' => \trans('fawry::exceptions.payment.items.invalid')
+                    'message' => Lang::get('fawry::exceptions.payment.items.invalid')
                 ]);
             }
 
             if (isset($item['quantity']) && (!is_numeric($item['quantity']) || $item['quantity'] < 1)) {
                 throw PaymentException::invalidItems()->setContext([
                     'index' => $index,
-                    'message' => \trans('fawry::exceptions.payment.items.invalid_quantity')
+                    'message' => Lang::get('fawry::exceptions.payment.items.invalid_quantity')
                 ]);
             }
         }
@@ -72,14 +73,14 @@ class PaymentValidation
         if (!filter_var($params['redirect_url'], FILTER_VALIDATE_URL)) {
             throw PaymentException::invalidCustomerData()->setContext([
                 'field' => 'redirect_url',
-                'message' => \trans('fawry::exceptions.payment.invalid_redirect_url')
+                'message' => Lang::get('fawry::exceptions.payment.invalid_redirect_url')
             ]);
         }
 
         if (isset($params['webhook_url']) && !filter_var($params['webhook_url'], FILTER_VALIDATE_URL)) {
             throw PaymentException::invalidCustomerData()->setContext([
                 'field' => 'webhook_url',
-                'message' => \trans('fawry::exceptions.payment.invalid_webhook_url')
+                'message' => Lang::get('fawry::exceptions.payment.invalid_webhook_url')
             ]);
         }
     }
