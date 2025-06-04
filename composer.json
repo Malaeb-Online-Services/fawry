@@ -1,0 +1,36 @@
+{
+    "name": "aymanelshehawy/laravel-fawry",
+    "description": "A Laravel package for Fawry payment gateway integration",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "AymanElshehawy\\LaravelFawry\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AymanElshehawy\\LaravelFawry\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^8.1",
+        "illuminate/support": "^10.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.0",
+        "phpunit/phpunit": "^10.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AymanElshehawy\\LaravelFawry\\FawryServiceProvider"
+            ],
+            "aliases": {
+                "Fawry": "AymanElshehawy\\LaravelFawry\\Facades\\Fawry"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+} 
