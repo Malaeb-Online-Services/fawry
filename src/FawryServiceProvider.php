@@ -1,6 +1,6 @@
 <?php
 
-namespace AymanElshehawy\LaravelFawry;
+namespace AymanZayedElshehawy\Fawry;
 
 use Illuminate\Support\ServiceProvider;
 
