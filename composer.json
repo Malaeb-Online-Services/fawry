@@ -3,6 +3,7 @@
     "description": "A Laravel package for Fawry payment gateway integration",
     "type": "library",
     "license": "MIT",
+    "version": "1.0.0",
     "autoload": {
         "psr-4": {
             "AymanElshehawy\\LaravelFawry\\": "src/"
