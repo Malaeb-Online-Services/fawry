@@ -31,7 +31,5 @@
                 "Fawry": "AymanElshehawy\\LaravelFawry\\Facades\\Fawry"
             }
         }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 } 
