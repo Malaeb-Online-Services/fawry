@@ -37,15 +37,26 @@ $params = [
     'payment_id' => '123',
     'user' => [
         'id' => 'user_123',
-        'phone_number_full' => '+201234567890',
+        'phone_number' => '+201234567890',
         'email' => 'user@example.com',
-        'first_name' => 'John',
-        'last_name' => 'Doe'
+        'name' => 'John Doe'
     ],
-    'amount' => 100.00,
-    'billable_id' => 'item_123',
-    'redirect' => 'https://your-domain.com/payment/callback',
-    'description' => 'Payment for Order #123'
+    'items' => [
+        [
+            'id' => 'item_1',
+            'description' => 'Product 1',
+            'price' => 50.00,
+            'quantity' => 1
+        ],
+        [
+            'id' => 'item_2',
+            'description' => 'Product 2',
+            'price' => 50.00,
+            'quantity' => 1
+        ]
+    ],
+    'redirect_url' => 'https://your-domain.com/payment/callback',
+    'webhook_url' => 'https://your-domain.com/payment/webhook'
 ];
 
 $paymentLink = Fawry::createPaymentLink($params);

@@ -28,33 +28,39 @@ class FawryExpressCheckoutService
     {
         $merchantRefNumber = $params['payment_id'];
         $customerProfileId = $params['user']['id'];
-        $amount = $params['amount'];
-        $itemId = $params['billable_id'];
-        $returnUrl = $params['redirect'];
-        $signature = $this->generateSignature($merchantRefNumber, $customerProfileId, $amount, $returnUrl, $itemId);
+        // Prepare charge items
+        $chargeItems = [];
+        $totalAmount = 0;
+        
+        foreach ($params['items'] as $item) {
+            $chargeItems[] = [
+                'itemId' => $item['id'],
+                'description' => $item['description'] ?? 'Payment for Order',
+                'price' => number_format($item['price'], 2, '.', ''),
+                'quantity' => $item['quantity'] ?? 1
+            ];
+            $totalAmount += ($item['price'] * ($item['quantity'] ?? 1));
+        }
+
+        $signature = $this->generateSignature($merchantRefNumber, $customerProfileId, $totalAmount, $returnUrl, $chargeItems);
+        
         $payload = [
             'merchantCode' => $this->merchantCode,
             'merchantRefNum' => $merchantRefNumber,
-            'customerMobile' => $params['user']['phone_number_full'],
+            'customerMobile' => $params['user']['phone_number'],
             'customerEmail' => $params['user']['email'],
-            'customerName' => $params['user']['first_name'] . ' ' . $params['user']['last_name'],
+            'customerName' => $params['user']['name'],
             'customerProfileId' => $customerProfileId,
             'language' => (App::getLocale() == 'en') ? 'en-gb' : 'ar-eg',
             'paymentExpiry' => now()->addMinutes(30)->timestamp * 1000,
-            'chargeItems' => [
-                [
-                    'itemId' => $itemId,
-                    'description' => $params['description'] ?? 'Payment for Order',
-                    'price' => number_format($amount, 2, '.', ''),
-                    'quantity' => 1
-                ],
-            ],
-            'returnUrl' => $returnUrl,
+            'chargeItems' => $chargeItems,
+            'returnUrl' => $params['redirect_url'],
+            'orderWebHookUrl' => $params['webhook_url'],
             'authCaptureModePayment' => false,
             'signature' => $signature,
         ];
 
-        $response = Http::timeout(20)->post("{$this->baseUrl}/fawrypay-api/api/payments/init", $payload);
+        $response = Http::post("{$this->baseUrl}/fawrypay-api/api/payments/init", $payload);
 
         if ($response->successful()) {
             return $response->body();
@@ -65,16 +71,21 @@ class FawryExpressCheckoutService
     /**
      * Generate Fawry signature for request
      */
-    protected function generateSignature(string $merchantRefNumber, string $customerProfileId, float $amount, $returnUrl, $itemId): string
+    protected function generateSignature(string $merchantRefNumber, string $customerProfileId, float $amount, $returnUrl, array $items): string
     {
+        $itemsString = '';
+        foreach ($items as $item) {
+            $itemsString .= $item['itemId'] . $item['quantity'] . number_format($item['price'], 2, '.', '');
+        }
+
         $string = $this->merchantCode .
             $merchantRefNumber .
             $customerProfileId .
             $returnUrl .
-            $itemId .
-            '1' .
+            $itemsString .
             number_format($amount, 2, '.', '') .
             $this->secureKey;
+            
         return hash('sha256', $string);
     }
 
