@@ -32,7 +32,7 @@ class FawryServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__.'/../app/Lang', 'fawry');
         
         $this->publishes([
-            __DIR__.'/../app/Lang' => lang_path('vendor/fawry'),
+            __DIR__.'/../app/Lang' => lang_path('fawry'),
         ], 'fawry-translations');
     }
 } 
