@@ -1,6 +1,6 @@
 <?php
 
-namespace AymanZayedElshehawy\Fawry\Exceptions;
+namespace Malaeb\Fawry\Exceptions;
 
 class InvalidConfigurationException extends FawryException
 {

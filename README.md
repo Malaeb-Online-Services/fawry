@@ -1,162 +1,141 @@
-# Laravel Fawry Payment Gateway
+# Laravel Fawry Package
 
-A Laravel package for integrating Fawry payment gateway into your Laravel applications.
+A Laravel package for integrating with the Fawry payment gateway.
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require aymanzayedelshehawy/fawry
-```
-
-After installing the package, publish the configuration file:
-
-```bash
-php artisan vendor:publish --provider="AymanZayedElshehawy\Fawry\FawryServiceProvider" --tag="fawry-config"
-```
-
-To publish the translation files:
-
-```bash
-php artisan vendor:publish --provider="AymanZayedElshehawy\Fawry\FawryServiceProvider" --tag="fawry-translations"
+composer require malaeb/fawry
 ```
 
 ## Configuration
 
-Add the following variables to your `.env` file:
+Publish the config file:
 
-```env
-FAWRY_MERCHANT_CODE=your_merchant_code
-FAWRY_SECURE_KEY=your_secure_key
-FAWRY_PAYMENT_URL=https://atfawry.fawrystaging.com
+```bash
+php artisan vendor:publish --provider="Malaeb\Fawry\FawryServiceProvider" --tag="fawry-config"
+```
+
+This will create a `config/fawry.php` file in your config directory.
+
+Publish the translation files:
+
+```bash
+php artisan vendor:publish --provider="Malaeb\Fawry\FawryServiceProvider" --tag="fawry-translations"
 ```
 
 ## Usage
 
-### Creating a Payment Link
+### Basic Usage
 
 ```php
-use AymanZayedElshehawy\Fawry\Facades\Fawry;
+use Malaeb\Fawry\Facades\Fawry;
 
-$params = [
+// Create a payment
+$payment = Fawry::createPayment([
     'payment_id' => '123',
     'user' => [
-        'id' => 'user_123',
-        'phone_number' => '+201234567890',
-        'email' => 'user@example.com',
-        'name' => 'John Doe'
+        'id' => '1',
+        'name' => 'John Doe',
+        'email' => 'john@example.com',
+        'phone_number' => '01234567890'
     ],
     'items' => [
         [
-            'id' => 'item_1',
-            'description' => 'Product 1',
-            'price' => 50.00,
-            'quantity' => 1
-        ],
-        [
-            'id' => 'item_2',
-            'description' => 'Product 2',
-            'price' => 50.00,
+            'id' => '1',
+            'price' => 100,
             'quantity' => 1
         ]
     ],
-    'redirect_url' => 'https://your-domain.com/payment/callback',
-    'webhook_url' => 'https://your-domain.com/payment/webhook'
-];
+    'redirect_url' => 'https://your-domain.com/payment/callback'
+]);
 
+// Get payment URL
+$paymentUrl = $payment->getPaymentUrl();
+
+// Handle webhook
+$webhook = Fawry::handleWebhook($request->all());
+```
+
+### Error Handling
+
+```php
 try {
-    $paymentLink = Fawry::createPaymentLink($params);
-} catch (\AymanZayedElshehawy\Fawry\Exceptions\PaymentException $e) {
-    // Handle payment-specific errors
-    $errorContext = $e->getContext();
-    // Log or handle the error
-} catch (\AymanZayedElshehawy\Fawry\Exceptions\InvalidConfigurationException $e) {
+    $payment = Fawry::createPayment([
+        'payment_id' => '123',
+        'user' => [
+            'id' => '1',
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'phone_number' => '01234567890'
+        ],
+        'items' => [
+            [
+                'id' => '1',
+                'price' => 100,
+                'quantity' => 1
+            ]
+        ],
+        'redirect_url' => 'https://your-domain.com/payment/callback'
+    ]);
+} catch (\Malaeb\Fawry\Exceptions\PaymentException $e) {
+    // Handle payment validation errors
+    return $e->getMessage();
+} catch (\Malaeb\Fawry\Exceptions\InvalidConfigurationException $e) {
     // Handle configuration errors
-    // Log or handle the error
+    return $e->getMessage();
 }
 ```
 
-### Handling Payment Status
+### Webhook Handling
 
 ```php
-use AymanZayedElshehawy\Fawry\Facades\Fawry;
+use Malaeb\Fawry\Facades\Fawry;
 
-$transactionData = [
-    'statusCode' => '200',
-    'merchantRefNumber' => '123',
-    // ... other transaction data
+public function handleWebhook(Request $request)
+{
+    try {
+        $webhook = Fawry::handleWebhook($request->all());
+        
+        // Process the webhook
+        if ($webhook->isSuccess()) {
+            // Payment was successful
+            return response()->json(['message' => 'Payment successful']);
+        } else {
+            // Payment failed
+            return response()->json(['message' => 'Payment failed']);
+        }
+    } catch (\Malaeb\Fawry\Exceptions\PaymentException $e) {
+        // Handle payment validation errors
+        return response()->json(['error' => $e->getMessage()], 400);
+    } catch (\Malaeb\Fawry\Exceptions\InvalidConfigurationException $e) {
+        // Handle configuration errors
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+}
+```
+
+## Configuration
+
+After publishing the configuration file, you can set your Fawry credentials in the `config/fawry.php` file:
+
+```php
+return [
+    'merchant_code' => env('FAWRY_MERCHANT_CODE'),
+    'secure_key' => env('FAWRY_SECURE_KEY'),
+    'base_url' => env('FAWRY_BASE_URL', 'https://atfawry.fawrystaging.com/'),
 ];
-
-try {
-    $status = Fawry::getPaymentStatus($transactionData);
-} catch (\Illuminate\Http\Client\ConnectionException $e) {
-    // Handle connection errors
-    // Log or handle the error
-}
 ```
-
-## Error Handling
-
-The package provides several exception classes for different error scenarios:
-
-### PaymentException
-
-Thrown when there are issues with payment processing:
-- Invalid payment parameters
-- Invalid user data
-- Invalid items
-- API errors
-
-```php
-try {
-    $paymentLink = Fawry::createPaymentLink($params);
-} catch (\AymanZayedElshehawy\Fawry\Exceptions\PaymentException $e) {
-    $errorContext = $e->getContext();
-    // Handle the error
-}
-```
-
-### InvalidConfigurationException
-
-Thrown when there are issues with the package configuration:
-- Missing merchant code
-- Missing secure key
-- Missing base URL
-
-```php
-try {
-    $paymentLink = Fawry::createPaymentLink($params);
-} catch (\AymanZayedElshehawy\Fawry\Exceptions\InvalidConfigurationException $e) {
-    // Handle configuration errors
-}
-```
-
-## Validation
-
-The package validates all input parameters before making API calls. Required validations include:
-
-- Payment ID
-- User data (ID, phone number, email, name)
-- Items (at least one item with valid ID and price)
-- Valid URLs for redirect and webhook
 
 ## Translations
 
-The package includes translations for error messages in both English and Arabic. To use translations:
+The package includes translations for error messages. You can publish them using:
 
-1. Publish the translation files:
 ```bash
-php artisan vendor:publish --provider="AymanZayedElshehawy\Fawry\FawryServiceProvider" --tag="fawry-translations"
+php artisan vendor:publish --provider="Malaeb\Fawry\FawryServiceProvider" --tag="fawry-translations"
 ```
-
-2. The translations will be available in:
-   - English: `app/Lang/en/fawry.php`
-   - Arabic: `app/Lang/ar/fawry.php`
-
-3. You can customize the translations by editing these files.
-
-4. The package will automatically use the correct language based on your application's locale setting.
 
 ## License
 

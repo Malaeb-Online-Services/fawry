@@ -1,6 +1,6 @@
 <?php
 
-namespace AymanZayedElshehawy\Fawry\Facades;
+namespace Malaeb\Fawry\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

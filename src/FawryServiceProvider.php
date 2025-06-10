@@ -1,6 +1,6 @@
 <?php
 
-namespace AymanZayedElshehawy\Fawry;
+namespace Malaeb\Fawry;
 
 use Illuminate\Support\ServiceProvider;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace AymanZayedElshehawy\Fawry\Tests\Unit;
+namespace Malaeb\Fawry\Tests\Unit;
 
-use AymanZayedElshehawy\Fawry\Exceptions\InvalidConfigurationException;
-use AymanZayedElshehawy\Fawry\Exceptions\PaymentException;
-use AymanZayedElshehawy\Fawry\Services\FawryExpressCheckoutService;
+use Malaeb\Fawry\Exceptions\InvalidConfigurationException;
+use Malaeb\Fawry\Exceptions\PaymentException;
+use Malaeb\Fawry\Services\FawryExpressCheckoutService;
 use Illuminate\Support\Facades\Config;
 use Orchestra\Testbench\TestCase;
 

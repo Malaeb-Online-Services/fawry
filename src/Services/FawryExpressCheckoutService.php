@@ -1,12 +1,12 @@
 <?php
 
-namespace AymanZayedElshehawy\Fawry\Services;
+namespace Malaeb\Fawry\Services;
 
-use AymanZayedElshehawy\Fawry\DTOs\ReturnPaymentHandleWebhookDTO;
-use AymanZayedElshehawy\Fawry\ENUM\PaymentTransactionStatusEnum;
-use AymanZayedElshehawy\Fawry\Exceptions\InvalidConfigurationException;
-use AymanZayedElshehawy\Fawry\Exceptions\PaymentException;
-use AymanZayedElshehawy\Fawry\Validation\PaymentValidation;
+use Malaeb\Fawry\DTOs\ReturnPaymentHandleWebhookDTO;
+use Malaeb\Fawry\ENUM\PaymentTransactionStatusEnum;
+use Malaeb\Fawry\Exceptions\InvalidConfigurationException;
+use Malaeb\Fawry\Exceptions\PaymentException;
+use Malaeb\Fawry\Validation\PaymentValidation;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Http;
