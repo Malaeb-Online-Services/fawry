@@ -95,23 +95,12 @@ class FawryExpressCheckoutService
                 return $response->body();
             }
 
-            Log::error('Fawry payment link creation failed', [
-                'response' => $response->json(),
-                'params' => $params
-            ]);
-
             throw PaymentException::apiError($response->json()['description'] ?? 'Unknown error', [
                 'response' => $response->json()
             ]);
-
-        } catch (ConnectionException $e) {
-            Log::error('Fawry API connection error', [
-                'message' => $e->getMessage(),
-                'params' => $params
-            ]);
-
+        } catch (ConnectionException $exception) {
             throw PaymentException::apiError('Failed to connect to Fawry API', [
-                'original_error' => $e->getMessage()
+                'original_error' => $exception->getMessage()
             ]);
         }
     }
@@ -160,23 +149,14 @@ class FawryExpressCheckoutService
                 );
             }
 
-            Log::warning('Fawry payment status check failed', [
-                'transaction_data' => $transactionData
-            ]);
-
             return new ReturnPaymentHandleWebhookDTO(
                 status: PaymentTransactionStatusEnum::FAILED,
                 status_text: PaymentTransactionStatusEnum::FAILED->name,
                 message: $transactionData['statusDescription'] ?? 'Payment failed',
                 response: $transactionData
             );
-        } catch (ConnectionException $e) {
-            Log::error('Fawry API connection error during status check', [
-                'message' => $e->getMessage(),
-                'transaction_data' => $transactionData
-            ]);
-
-            throw $e;
+        } catch (ConnectionException $exception) {
+            throw $exception;
         }
     }
 
