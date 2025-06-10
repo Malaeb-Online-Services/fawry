@@ -10,7 +10,6 @@ use AymanZayedElshehawy\Fawry\Validation\PaymentValidation;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class FawryExpressCheckoutService
 {
