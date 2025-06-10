@@ -3,9 +3,9 @@
 return [
     'exceptions' => [
         'configuration' => [
-            'missing_merchant_code' => 'رمز التاجر غير مُكوّن.',
-            'missing_secure_key' => 'المفتاح الآمن غير مُكوّن.',
-            'missing_base_url' => 'عنوان URL الأساسي غير مُكوّن.',
+            'missing_merchant_code' => 'كود التاجر غير مكون.',
+            'missing_secure_key' => 'المفتاح الآمن غير مكون.',
+            'missing_base_url' => 'عنوان URL الأساسي غير مكون.',
         ],
         'payment' => [
             'invalid_items' => 'عناصر الدفع غير صالحة أو مفقودة.',
@@ -19,7 +19,7 @@ return [
             'items' => [
                 'required' => 'مطلوب عنصر واحد على الأقل',
                 'invalid' => 'يجب أن يحتوي العنصر على معرف وسعر صالحين',
-                'invalid_quantity' => 'يجب أن تكون الكمية رقماً موجباً',
+                'invalid_quantity' => 'يجب أن تكون كمية العنصر رقماً موجباً',
             ],
         ],
     ],
