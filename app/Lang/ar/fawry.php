@@ -12,8 +12,8 @@ return [
             'invalid_amount' => 'مبلغ الدفع غير صالح.',
             'invalid_customer_data' => 'بيانات العميل غير صالحة أو مفقودة.',
             'api_error' => 'خطأ في واجهة برمجة التطبيقات: :message',
-            'required_field_missing' => "الحقل المطلوب ':field' مفقود",
-            'required_user_field_missing' => "حقل المستخدم المطلوب ':field' مفقود أو فارغ",
+            'required_field_missing' => "الحقل المطلوب :field مفقود",
+            'required_user_field_missing' => "حقل المستخدم المطلوب :field مفقود أو فارغ",
             'invalid_redirect_url' => 'تنسيق عنوان URL غير صالح',
             'invalid_webhook_url' => 'تنسيق عنوان webhook غير صالح',
             'items' => [

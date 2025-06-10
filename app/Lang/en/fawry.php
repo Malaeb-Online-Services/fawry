@@ -12,8 +12,8 @@ return [
             'invalid_amount' => 'Payment amount is invalid.',
             'invalid_customer_data' => 'Customer data is invalid or missing.',
             'api_error' => 'Fawry API Error: :message',
-            'required_field_missing' => "Required field ':field' is missing",
-            'required_user_field_missing' => "Required user field ':field' is missing or empty",
+            'required_field_missing' => "Required field :field is missing",
+            'required_user_field_missing' => "Required user field :field is missing or empty",
             'invalid_redirect_url' => 'Invalid redirect URL format',
             'invalid_webhook_url' => 'Invalid webhook URL format',
             'items' => [
