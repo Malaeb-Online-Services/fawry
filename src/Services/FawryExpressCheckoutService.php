@@ -98,7 +98,7 @@ class FawryExpressCheckoutService
                 'response' => $response->json()
             ]);
         } catch (ConnectionException $exception) {
-            throw PaymentException::apiError('Failed to connect to Fawry API', [
+            throw PaymentException::apiError($exception->getMessage(), [
                 'original_error' => $exception->getMessage()
             ]);
         }
