@@ -88,6 +88,9 @@ class FawryExpressCheckoutService
                 'signature' => $signature,
             ];
 
+            // Log the payload for debugging
+            \Log::info('Fawry Payment Payload', $payload);
+
             $response = Http::post("{$this->baseUrl}/fawrypay-api/api/payments/init", $payload);
 
             if ($response->successful()) {
@@ -98,6 +101,8 @@ class FawryExpressCheckoutService
                 'response' => $response->json()
             ]);
         } catch (ConnectionException $exception) {
+            // Log the connection error
+            \Log::error('Fawry Payment Connection Error', ['message' => $exception->getMessage()]);
             throw PaymentException::apiError($exception->getMessage(), [
                 'original_error' => $exception->getMessage()
             ]);
