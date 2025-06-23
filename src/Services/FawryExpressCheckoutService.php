@@ -144,8 +144,8 @@ class FawryExpressCheckoutService
     public function getPaymentStatus(array $transactionData): ReturnPaymentHandleWebhookDTO
     {
         try {
-            if (isset($transactionData['statusCode']) && (int)$transactionData['statusCode'] == 200) {
-                $merchantRefNumber = $transactionData['merchantRefNumber'] ?? '';
+            if (!empty($transactionData['merchantRefNumber'])) {
+                $merchantRefNumber = $transactionData['merchantRefNumber'];
                 $merchantCode = $this->merchantCode;
                 $merchantSecureKey = $this->secureKey;
                 $signature = hash('sha256', $merchantCode . $merchantRefNumber . $merchantSecureKey);
@@ -156,7 +156,7 @@ class FawryExpressCheckoutService
                 $response = Http::get($url);
                 $response = $response->object();
                 return new ReturnPaymentHandleWebhookDTO(
-                    status: ($this->isPaidSuccessfully($response->orderStatus)) ? PaymentTransactionStatusEnum::SUCCESS : PaymentTransactionStatusEnum::FAILED,
+                    status: (isset($response->orderStatus) && $this->isPaidSuccessfully($response->orderStatus)) ? PaymentTransactionStatusEnum::SUCCESS : PaymentTransactionStatusEnum::FAILED,
                     status_text: $response->orderStatus,
                     response: $transactionData
                 );
