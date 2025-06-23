@@ -6,8 +6,21 @@ A Laravel package for integrating with the Fawry payment gateway.
 
 You can install the package via composer:
 
+✅ **Also Required: Add VCS Repo to Your Laravel Project**
+In your Laravel app's composer.json, make sure you include the GitHub repository like this:
+```
+"repositories": 
+[
+    {
+        "type": "vcs",
+        "url": "https://github.com/Malaeb-Online-Services/fawry"
+    }
+]
+```
+
+**Then run:**
 ```bash
-composer require malaeb/fawry
+composer require malaeb/fawry:dev-production
 ```
 
 ## Configuration
