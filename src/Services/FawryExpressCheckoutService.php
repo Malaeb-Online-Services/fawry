@@ -58,8 +58,7 @@ class FawryExpressCheckoutService
             
             // Prepare charge items
             $chargeItems = [];
-            $totalAmount = 0;
-            
+
             foreach ($params['items'] as $item) {
                 $chargeItems[] = [
                     'itemId' => $item['id'],
@@ -67,10 +66,9 @@ class FawryExpressCheckoutService
                     'price' => number_format($item['price'], 2, '.', ''),
                     'quantity' => $item['quantity'] ?? 1
                 ];
-                $totalAmount += ($item['price'] * ($item['quantity'] ?? 1));
             }
 
-            $signature = $this->generateSignature($merchantRefNumber, $customerProfileId, $totalAmount, $params['redirect_url'], $chargeItems);
+            $signature = $this->generateSignature($merchantRefNumber, $params['redirect_url'], $chargeItems, $customerProfileId);
             
             $payload = [
                 'merchantCode' => $this->merchantCode,
@@ -112,21 +110,32 @@ class FawryExpressCheckoutService
     /**
      * Generate Fawry signature for request
      */
-    protected function generateSignature(string $merchantRefNumber, string $customerProfileId, float $amount, string $returnUrl, array $items): string
+    protected function generateSignature(string $merchantRefNumber, string $returnUrl, array $items, ?string $customerProfileId): string
     {
+        // Step 1: Sort items by itemId (as strings)
+        usort($items, function ($a, $b) {
+            return strcmp($a['itemId'], $b['itemId']);
+        });
+
+        // Step 2: Concatenate sorted item details
         $itemsString = '';
         foreach ($items as $item) {
-            $itemsString .= $item['itemId'] . $item['quantity'] . number_format($item['price'], 2, '.', '');
+            $itemsString .= $item['itemId'];
+            $itemsString .= $item['quantity'];
+            $itemsString .= number_format($item['price'], 2, '.', '');
         }
 
-        $string = $this->merchantCode .
+        // Step 3: Build the full string to hash
+        $stringToHash =
+            $this->merchantCode .
             $merchantRefNumber .
-            $customerProfileId .
+            ($customerProfileId ?? '') . // use empty string if null
             $returnUrl .
             $itemsString .
             $this->secureKey;
-            
-        return hash('sha256', $string);
+
+        // Step 4: Return SHA-256 hash
+        return hash('sha256', $stringToHash);
     }
 
     /**
