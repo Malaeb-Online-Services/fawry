@@ -74,7 +74,7 @@ class FawryExpressCheckoutService
                 'merchantCode' => $this->merchantCode,
                 'merchantRefNum' => $merchantRefNumber,
                 'customerMobile' => $params['user']['phone_number'],
-                'customerEmail' => $params['user']['email'],
+                'customerEmail' => (isset($params['user']['email'])) ? $params['user']['email'] : '',
                 'customerName' => $params['user']['name'],
                 'customerProfileId' => $customerProfileId,
                 'language' => (App::getLocale() == 'en') ? 'en-gb' : 'ar-eg',

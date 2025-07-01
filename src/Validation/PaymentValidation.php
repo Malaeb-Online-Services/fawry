@@ -27,7 +27,7 @@ class PaymentValidation
 
     protected static function validateUserData(array $userData): void
     {
-        $requiredFields = ['id', 'phone_number', 'email', 'name'];
+        $requiredFields = ['id', 'phone_number', 'name'];
         
         foreach ($requiredFields as $field) {
             if (!isset($userData[$field]) || empty($userData[$field])) {
