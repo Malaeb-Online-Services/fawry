@@ -20,7 +20,7 @@ In your Laravel app's composer.json, make sure you include the GitHub repository
 
 **Then run:**
 ```bash
-composer require malaeb/fawry:^1.0.1
+composer require malaeb/fawry:^1.0.2
 ```
 
 ## Configuration
