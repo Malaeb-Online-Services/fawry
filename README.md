@@ -151,5 +151,4 @@ php artisan vendor:publish --provider="Malaeb\Fawry\FawryServiceProvider" --tag=
 ```
 
 ## License
-
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information. 
